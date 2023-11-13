@@ -1,5 +1,8 @@
 module main
 
+import cxf
+
 fn main() {
-	println('Hello World!')
+	fifty := cxf.cxf('50')
+	println(fifty.bin())
 }
