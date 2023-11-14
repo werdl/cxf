@@ -42,6 +42,36 @@ fn bin(i string) string {
 	return b.bin_str()
 }
 
-pub fn (c CXF) bin() string {
-	return '${c.sign}${bin(c.exponent)}${bin(c.mantissa)}'
+/*
+Binary arbitrary precision floating point number repr
+
+	Bit 1 - sign bit
+		0 - positive
+		1 - negative
+
+	Bits 2-n - mantissa
+		what is a mantissa
+			0.mantissa * 10^exponent * (0-sign) == number
+		n is returned as the second string
+	
+	Bits n-end - exponent
+		what is an exponent
+			see above
+		base is 10
+
+
+	Example: 50
+
+	Sign - 0
+	Mantissa - 5
+	Exponent - 2
+
+	Binary:
+	0 101 10, n is 3
+
+
+*/
+pub fn (c CXF) bin() (string, string) {
+	str := '${c.sign}${bin(c.mantissa)}${bin(c.exponent)}'
+	return str, bin(c.mantissa).len.str()
 }
