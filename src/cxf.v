@@ -8,29 +8,29 @@ struct CXF {
 pub mut:
 	prec     string
 	sign     int
-	exponent string
+	exponent string // stored as base 10
 	mantissa string
 }
 
 pub fn cxf(s string) CXF {
 	mut result := CXF{}
-	mut tocalc := 0.0
+	mut tocalc := ''
 	match s[0] {
 		`-` {
 			result.sign = 1
-			tocalc = s[1..].f64()
+			tocalc = s[1..]
 		}
 		`+` {
 			result.sign = 0
-			tocalc = s[1..].f64()
+			tocalc = s[1..]
 		}
 		else {
-			tocalc = s.f64()
+			tocalc = s
 		}
 	}
-	result.exponent = big.integer_from_int(int(tocalc)).bin_str().len.str()
+	result.exponent = tocalc.len.str()
 
-	result.mantissa = (tocalc / math.pow(2, result.exponent.f64())).str()[2..]
+	result.mantissa = tocalc.replace('.', '').trim_right('0')
 
 	result.prec = result.mantissa.str().len.str()
 
