@@ -28,7 +28,7 @@ pub fn cxf(s string) CXF {
 			tocalc = s
 		}
 	}
-	result.exponent = tocalc.len.str()
+	result.exponent = tocalc.split('.')[0].len.str()
 
 	result.mantissa = tocalc.replace('.', '').trim_right('0')
 
@@ -42,11 +42,6 @@ fn bin(i string) string {
 	return b.bin_str()
 }
 
-type IEEE754single = string
-type IEEE754double = string
-type IEEE754quadruple = string
-type IEEE754octuple = string
-
 pub fn pad(s string, len int) string {
 	if s.len == len {
 		return s
@@ -57,8 +52,39 @@ pub fn pad(s string, len int) string {
 	}
 }
 
-// pub fn (c CXF) single() IEEE754single {
-// }
+type IEEE754decimal32 = string
+type IEEE754decimal64 = string
+type IEEE754decimal128 = string
+
+pub fn (c CXF) d32() !IEEE754decimal32 {
+	if bin(c.exponent).len > 11 {
+		return error('Exponent ${c.exponent} Too Big')
+	}
+	biased_exponent := big.integer_from_int(c.exponent.int() + 96)
+	// println('${c.mantissa}, ${pad(bin(c.mantissa), 7)}')
+	return IEEE754decimal32('${c.sign} ${pad(biased_exponent.bin_str(), 11)} ${pad(bin(c.mantissa),
+		20)}')
+}
+
+pub fn (c CXF) d64() !IEEE754decimal64 {
+	if bin(c.exponent).len > 13 {
+		return error('Exponent ${c.exponent} Too Big')
+	}
+	biased_exponent := big.integer_from_int(c.exponent.int() + 192)
+	// println('${c.mantissa}, ${pad(bin(c.mantissa), 7)}')
+	return IEEE754decimal64('${c.sign} ${pad(biased_exponent.bin_str(), 13)} ${pad(bin(c.mantissa),
+		52)}')
+}
+
+pub fn (c CXF) d128() !IEEE754decimal128 {
+	if bin(c.exponent).len > 17 {
+		return error('Exponent ${c.exponent} Too Big')
+	}
+	biased_exponent := big.integer_from_int(c.exponent.int() + 6144)
+	// println('${c.mantissa}, ${pad(bin(c.mantissa), 7)}')
+	return IEEE754decimal128('${c.sign} ${pad(biased_exponent.bin_str(), 17)} ${pad(bin(c.mantissa),
+		110)}')
+}
 
 /*
 Binary arbitrary precision floating point number repr
