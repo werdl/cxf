@@ -4,5 +4,5 @@ import cxf
 
 fn main() {
 	fifty := cxf.cxf('-50')
-	println(fifty.bin())
+	println(cxf.pad('76835874', 6))
 }

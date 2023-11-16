@@ -42,6 +42,24 @@ fn bin(i string) string {
 	return b.bin_str()
 }
 
+type IEEE754single = string
+type IEEE754double = string
+type IEEE754quadruple = string
+type IEEE754octuple = string
+
+pub fn pad(s string, len int) string {
+	if s.len == len {
+		return s
+	} else if s.len < len {
+		return '0'.repeat(len - s.len) + s
+	} else {
+		return s[0..len]
+	}
+}
+
+// pub fn (c CXF) single() IEEE754single {
+// }
+
 /*
 Binary arbitrary precision floating point number repr
 
@@ -68,8 +86,6 @@ Binary arbitrary precision floating point number repr
 
 	Binary:
 	0 101 10, n is 3
-
-
 */
 pub fn (c CXF) bin() (string, string) {
 	str := '${c.sign}${bin(c.mantissa)}${bin(c.exponent)}'
