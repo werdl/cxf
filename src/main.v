@@ -4,5 +4,7 @@ import cxf
 
 fn main() {
 	fifty := cxf.cxf('50.7')
-	println(fifty.d128() or { return })
+	d := fifty.d32() or { return }
+	println(d)
+	println(d.f64())
 }
