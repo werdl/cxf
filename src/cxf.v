@@ -30,7 +30,7 @@ pub fn cxf(s string) CXF {
 	}
 	result.exponent = tocalc.split('.')[0].len.str()
 
-	result.mantissa = tocalc.replace('.', '').trim_right('0')
+	result.mantissa = tocalc.replace('.', '')
 
 	result.prec = result.mantissa.str().len.str()
 
@@ -43,12 +43,16 @@ fn bin(i string) string {
 }
 
 pub fn pad(s string, len int) string {
+	mut denary := s.parse_int(2, 64) or { panic(err) }.str()
 	if s.len == len {
 		return s
 	} else if s.len < len {
 		return '0'.repeat(len - s.len) + s
 	} else {
-		return s[0..len]
+		for bin(denary).len > len {
+			denary = denary[0..denary.len - 1]
+		}
+		return bin(denary)
 	}
 }
 
@@ -61,7 +65,7 @@ pub fn (c CXF) d32() !IEEE754decimal32 {
 		return error('Exponent ${c.exponent} Too Big')
 	}
 	biased_exponent := big.integer_from_int(c.exponent.int() + 96)
-	// println('${c.mantissa}, ${pad(bin(c.mantissa), 7)}')
+
 	return IEEE754decimal32('${c.sign}${pad(biased_exponent.bin_str(), 11)}${pad(bin(c.mantissa),
 		20)}')
 }
