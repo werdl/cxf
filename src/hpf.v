@@ -101,8 +101,30 @@ pub fn (a HPF) - (b HPF) HPF {
 pub fn (a HPF) * (b HPF) HPF {
 	mut res := HPF{}
 
-	awhole := big.integer_from_string(a.number[..a.point]) or { panic(err) }
-	bwhole := big.integer_from_string(b.number[..b.point]) or { panic(err) }
+	mut awhole := big.integer_from_string(a.number[..a.point]) or { panic(err) }
+
+	mut a_is_zero := false
+
+	mut bwhole := big.integer_from_string(b.number[..b.point]) or { panic(err) }
+
+	mut b_is_zero := false
+
+	if awhole == big.integer_from_string('0') or { panic(err) } {
+		awhole = big.integer_from_string('1') or { panic(err) }
+		a_is_zero = true
+	}
+
+	if bwhole == big.integer_from_string('0') or { panic(err) } {
+		bwhole = big.integer_from_string('1') or { panic(err) }
+		b_is_zero = true
+	}
+
+	if a_is_zero && b_is_zero {
+		bwhole = big.integer_from_string('0') or { panic(err) }
+		awhole = big.integer_from_string('0') or { panic(err) }
+		a_is_zero = false
+		b_is_zero = false
+	}
 
 	approx := (awhole * bwhole).str().len
 	println('${awhole} ${bwhole}')
@@ -112,7 +134,7 @@ pub fn (a HPF) * (b HPF) HPF {
 	println('${a_altogether} ${b_altogether}')
 	alen := a.str().len
 	blen := b.str().len
-
+	
 	if alen > blen {
 		b_altogether = big.integer_from_string(b_altogether.str() + '0'.repeat(alen - blen)) or {
 			panic(err)
@@ -125,7 +147,14 @@ pub fn (a HPF) * (b HPF) HPF {
 	}
 	println('${a_altogether} ${b_altogether}')
 
-	result := a_altogether * b_altogether
+	mut result := a_altogether * b_altogether
+
+	if a_is_zero {
+		result -= a_altogether
+	}
+	if b_is_zero {
+		result -= b_altogether
+	}
 	println(approx)
 	println(result.str())
 	res.number = result.str().trim_right('0')
